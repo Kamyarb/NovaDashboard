@@ -483,6 +483,19 @@ def get_market_snapshot(prefer_collector_minutes: float = 20.0):
         — اگر همان یک‌بار هم شکست خورد → آخرین DB (اگر هست)
     """
     coll, age, path, trading_date = load_collector_snapshot(prefer_collector_minutes)
+
+    # اگر دیتابیس وجود ندارد یا snapshots خالی است، یک snapshot زنده بگیر.
+    # این مسیر برای اولین اجرای اپ / Deploy طراحی شده است.
+    if coll is None:
+        try:
+            snapshot = _one_shot_fetch_and_store()
+            snapshot["source"] = "live_tsetmc_initial"
+            return snapshot
+        except Exception as exc:
+            raise RuntimeError(
+                f"دیتابیس بازار خالی است و دریافت اولیه از TSETMC ناموفق بود: {exc}"
+            ) from exc
+
     today = now_tehran().date().isoformat()
     in_session = False
     try:
