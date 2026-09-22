@@ -12,7 +12,6 @@ from zoneinfo import ZoneInfo
 _COLLECTOR_MODE = "--collect" in sys.argv
 
 import numpy as np
-import pandas as pd
 import requests
 from dataclasses import dataclass
 from scipy.optimize import brentq
@@ -88,7 +87,6 @@ _NOVA_SIG_EXPECT = (
 # STORAGE (embedded SQLite for pressure / market index)
 # ============================================================
 
-import json
 import sqlite3
 from contextlib import contextmanager
 from pathlib import Path as _Path
@@ -2645,7 +2643,6 @@ DIGITS = str.maketrans(
 # ============================================================
 
 import numpy as np
-import pandas as pd
 try:
     import jdatetime
 except ImportError:
@@ -11126,7 +11123,6 @@ class CoveredCallOptimizer:
 # MODULE 2: ADVANCED ORDER BOOK & MARKET SENTIMENT ANALYZER
 # ============================================================
 
-import pandas as pd
 
 class AdvancedSentimentAnalyzer:
     """
@@ -11176,9 +11172,6 @@ class AdvancedSentimentAnalyzer:
 # MODULE 1: BLACK-SCHOLES OPTIONS PRICING & GREEKS ENGINE
 # ============================================================
 
-import numpy as np
-from scipy.stats import norm
-from scipy.optimize import brentq
 
 class OptionGreeksEngine:
     """
@@ -11233,8 +11226,7 @@ class OptionGreeksEngine:
             return 0.0
 
 
-import sys as _sys
-if _COLLECTOR_MODE or "--collect" in _sys.argv:
+if _COLLECTOR_MODE or "--collect" in sys.argv:
     _collector_cli_main()
 else:
     dashboard()
