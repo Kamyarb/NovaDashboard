@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from collections import defaultdict
 import base64
 import datetime as dt
 import html
@@ -7,13 +7,18 @@ import re
 import sys
 from pathlib import Path
 from zoneinfo import ZoneInfo
-
+import numpy as np
+import pandas as pd
+import requests
+import json
 
 _COLLECTOR_MODE = "--collect" in sys.argv
 
 import numpy as np
 import requests
-from dataclasses import dataclass
+from dataclasses  import asdict, dataclass
+
+
 from scipy.optimize import brentq
 from scipy.stats import norm
 import hashlib
@@ -528,7 +533,9 @@ def get_market_snapshot(prefer_collector_minutes: float = 20.0):
         try:
             collector_save_snapshot(snapshot, result, fetched_at, day, key)
         except Exception:
-            pass  # حتی اگر ذخیره نشد، داده را برگردان
+            import traceback
+            traceback.print_exc()
+            raise
         snap = collector_market_to_app_frames(
             {"market": snapshot["market"], "book": snapshot["book"]},
             fetched_at,
@@ -548,11 +555,10 @@ def get_market_snapshot(prefer_collector_minutes: float = 20.0):
             snapshot = _one_shot_fetch_and_store()
             snapshot["source"] = "live_tsetmc_initial"
             return snapshot
-        except Exception as exc:
-            raise RuntimeError(
-                "دیتابیس بازار خالی/نامعتبر است و دریافت اولیه از TSETMC "
-                f"ناموفق بود: {type(exc).__name__}: {exc}"
-            ) from exc
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            raise
 
     # ----- خارج از جلسه -----
     if not in_session:
@@ -1076,13 +1082,25 @@ def calculate(snapshot, state):
             if row["scale_source"] == "fallback"
         )
 
+        pressure_members = [
+            row
+            for row in members
+            if row["book_valid"]
+            and row["pressure_z"] is not None
+        ]
+
+        pressure_weight = sum(
+            row[weight_key]
+            for row in pressure_members
+        )
+
         pressure = (
             100 * sum(
                 row[weight_key] * row["pressure_z"]
-                for row in members
-                if row["book_valid"]
-            ) / valid_weight
-            if valid_weight > 0 else None
+                for row in pressure_members
+            ) / pressure_weight
+            if pressure_weight > 0
+            else None
         )
 
         available = bool(members)
@@ -1464,7 +1482,7 @@ def aggregate(rows, scope, candidate_count, config):
         weighted_return += weight * row["return_pct"]
         weighted_last_return += weight * row["last_return_pct"]
 
-        if row["book_valid"]:
+        if row["book_valid"] and row["imbalance"] is not None:
             book_weight += weight
             weighted_pressure += weight * row["imbalance"]
 
@@ -10298,7 +10316,7 @@ def dashboard():
         """
         <div class="hero">
             <div class="eyebrow">NOVA / MARKET OBSERVATORY</div>
-            <h1>رصدخانه هوشمند بازار سرمایه · app10</h1>
+            <h1>رصدخانه هوشمند بازار سرمایه </h1>
             <p>
                 فشار سفارش‌ها، جریان معاملات اختیار و ارزش ارزی سهام؛
                 یک نمای یکپارچه از داده‌های واقعی بازار

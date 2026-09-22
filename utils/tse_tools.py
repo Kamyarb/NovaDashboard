@@ -1,21 +1,25 @@
-import datetime as dt
-import json
-import locale
-import os
-import re
-import time
-import warnings
-
-import jdatetime
 import numpy as np
 import pandas as pd
-import pytz
+import datetime
+import re
 import requests
+import time
+import pytz
+import jdatetime
+import json 
+import jdatetime
+import re
+import json
+import numpy as np
+import pandas as pd
+import warnings
+warnings.filterwarnings('ignore')
+import os
+import datetime
+import jdatetime
+import locale
+jdatetime.set_locale('fa_IR')
 from persiantools.jdatetime import JalaliDate
-
-jdatetime.set_locale("fa_IR")
-warnings.filterwarnings("ignore")
-
 
 import time
 import statistics
@@ -125,6 +129,23 @@ def orderbook_dataframe(parts):
     df2_pivot = df2_pivot.apply(pd.to_numeric, errors='ignore')
     return df2_pivot
 
+
+def convert_ar_characters(input_str):
+    mapping = {
+        'ك': 'ک',
+        'دِ': 'د',
+        'بِ': 'ب',
+        'زِ': 'ز',
+        'ذِ': 'ذ',
+        'شِ': 'ش',
+        'سِ': 'س',
+        'ى': 'ی',
+        'ي': 'ی',
+        
+    }
+    pattern = "|".join(map(re.escape, mapping.keys()))
+    
+    return re.sub(pattern, lambda m: mapping[m.group()], str(input_str))
 
 def type_asset_mapper(assettype : str):
     if assettype=='stocks':
