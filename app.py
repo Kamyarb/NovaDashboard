@@ -484,18 +484,6 @@ def get_market_snapshot(prefer_collector_minutes: float = 20.0):
     """
     coll, age, path, trading_date = load_collector_snapshot(prefer_collector_minutes)
 
-    # اگر دیتابیس وجود ندارد یا snapshots خالی است، یک snapshot زنده بگیر.
-    # این مسیر برای اولین اجرای اپ / Deploy طراحی شده است.
-    if coll is None:
-        try:
-            snapshot = _one_shot_fetch_and_store()
-            snapshot["source"] = "live_tsetmc_initial"
-            return snapshot
-        except Exception as exc:
-            raise RuntimeError(
-                f"دیتابیس بازار خالی است و دریافت اولیه از TSETMC ناموفق بود: {exc}"
-            ) from exc
-
     today = now_tehran().date().isoformat()
     in_session = False
     try:
@@ -551,6 +539,20 @@ def get_market_snapshot(prefer_collector_minutes: float = 20.0):
         snap["db_path"] = path
         snap["trading_date"] = day
         return snap
+
+    # اگر دیتابیس وجود ندارد یا snapshots خالی/نامعتبر است،
+    # برای اولین اجرای اپ یک snapshot زنده از TSETMC بگیر.
+    # این بلوک باید بعد از تعریف تابع nested اجرا شود.
+    if coll is None:
+        try:
+            snapshot = _one_shot_fetch_and_store()
+            snapshot["source"] = "live_tsetmc_initial"
+            return snapshot
+        except Exception as exc:
+            raise RuntimeError(
+                "دیتابیس بازار خالی/نامعتبر است و دریافت اولیه از TSETMC "
+                f"ناموفق بود: {type(exc).__name__}: {exc}"
+            ) from exc
 
     # ----- خارج از جلسه -----
     if not in_session:
