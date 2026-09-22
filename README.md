@@ -58,61 +58,108 @@ Streamlit Dashboard
 | `data/` | Local market database and runtime data; intentionally excluded from Git |
 | `.gitignore` | Keeps local market data and other generated files out of the repository |
 
-## Installation
+## Installation with Miniconda
 
-Clone the repository:
+NovaDashboard is developed and tested with **Python 3.11** and can be run using **Miniconda**.
+
+### 1. Install Miniconda
+
+Download and install Miniconda for your operating system:
+
+https://docs.anaconda.com/miniconda/
+
+After installation, restart your terminal if necessary and verify Conda:
+
+```bash
+conda --version
+```
+
+### 2. Clone the repository
 
 ```bash
 git clone https://github.com/Kamyarb/NovaDashboard.git
 cd NovaDashboard
 ```
 
-Create a virtual environment:
+### 3. Create the Conda environment
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+conda create -n novadashboard python=3.11 -y
 ```
 
-Install dependencies:
+Activate it:
+
+```bash
+conda activate novadashboard
+```
+
+### 4. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-If you are developing locally and `requirements.txt` is not yet available, install the packages imported by the application according to your Python environment.
+Verify the Python environment:
+
+```bash
+python --version
+```
+
+You should see Python 3.11.x.
 
 ## Run the dashboard
 
-Start Streamlit with:
+With the `novadashboard` Conda environment activated:
 
 ```bash
 streamlit run app.py
 ```
 
-Then open the local Streamlit URL shown in the terminal.
+Streamlit will display the local address in the terminal. Open that address in your browser.
 
-## Data collection
+## Run the data collector
 
-NovaDashboard can run its collector entry point with:
+The collector can be started with:
 
 ```bash
 python data_collector.py
 ```
 
-The application stores collected snapshots in a local SQLite database under:
+The application stores collected market snapshots in:
 
 ```text
 data/market.sqlite
 ```
 
-The database is **not committed to GitHub**. It is generated locally and can become large over time.
+The `data/` directory is intentionally excluded from Git. The local SQLite database can become large and is therefore not part of the GitHub repository.
+
+## Development workflow
+
+A typical local development workflow is:
+
+```bash
+conda activate novadashboard
+cd NovaDashboard
+streamlit run app.py
+```
+
+Before committing changes, check the repository:
+
+```bash
+git status
+```
+
+The local market database should remain ignored:
+
+```bash
+git check-ignore -v data/market.sqlite
+```
 
 ## Important notes about data
 
 NovaDashboard depends on market data obtained from TSETMC endpoints. Availability, response formats, rate limits, and market-session behavior can change independently of this project.
 
-The dashboard should therefore be treated as an analytical and research tool. Market indicators and calculated signals are not investment advice.
+The dashboard is intended as an analytical and research tool. Market indicators and calculated signals are not investment advice.
 
 ## Project principles
 
@@ -128,7 +175,7 @@ NovaDashboard is built around a few simple ideas:
 
 Contributions, bug reports, and ideas are welcome.
 
-For development, it is recommended to keep local runtime data under `data/` and avoid committing generated databases, caches, credentials, or environment-specific files.
+For development, keep local runtime data under `data/` and avoid committing generated databases, caches, credentials, or environment-specific files.
 
 ## Author
 
