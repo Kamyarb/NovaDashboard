@@ -1,0 +1,17 @@
+[theme]
+base = "dark"
+primaryColor = "#2DD4BF"
+backgroundColor = "#080D19"
+secondaryBackgroundColor = "#111A2C"
+textColor = "#E6EDF7"
+font = "sans serif"
+
+[server]
+maxUploadSize = 30
+
+#conda activate bsir
+###collector
+#python app.py --collect --interval 60 --start 09:00 --end 15:30 --weekdays-only
+
+# داشبورد
+streamlit run app.py

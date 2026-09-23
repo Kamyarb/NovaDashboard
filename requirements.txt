@@ -1,0 +1,9 @@
+streamlit
+pandas
+numpy
+requests
+scipy
+plotly
+jdatetime
+persiantools
+pytz
