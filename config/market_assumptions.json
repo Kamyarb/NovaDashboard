@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "timezone": "Asia/Tehran",
+  "session": {
+    "record_start": "08:45",
+    "record_end": "12:30",
+    "record_end_exclusive": true,
+    "day_rollover": "08:45",
+    "weekdays_only": true,
+    "comment_fa": "ذخیرهٔ شاخص فقط در [08:45, 12:30). صفحهٔ اول تا 08:45 روز بعد آخرین جلسه را با برچسب بسته نشان می‌دهد."
+  },
+  "index": {
+    "base_points": 100.0,
+    "cap_weight": 0.60,
+    "value_weight": 0.40,
+    "official_lock_pct": 3.0,
+    "max_virtual_return_pct": 5.0,
+    "max_spread_pct": 3.0,
+    "max_levels": 5,
+    "level_decay": 2.0,
+    "scopes": ["combined", "stock", "fund"]
+  },
+  "quality": {
+    "outlier_mad_k": 5.0,
+    "quarantine_not_delete": true,
+    "comment_fa": "دادهٔ مشکوک قرنطینه می‌شود؛ حرکت واقعی بازار برای صاف کردن نمودار حذف نمی‌شود."
+  },
+  "slope": {
+    "horizons_minutes": [5, 15, 30, 60],
+    "tolerance_ratio": 0.30,
+    "min_tolerance_sec": 60,
+    "max_tolerance_sec": 180,
+    "bullet_window_points": 5
+  },
+  "options_index": {
+    "enabled": true,
+    "min_underlying_volume_rank": 50,
+    "require_valid_mid": true,
+    "max_spread_pct_of_mid": 15.0,
+    "use_calls_only": true,
+    "base_points": 100.0,
+    "comment_fa": "فقط callهای پرمعامله با مظنهٔ معتبر؛ بازده معادل دارایی پایه؛ بدون دادهٔ معتبر خط رسم نمی‌شود."
+  },
+  "covered_call": {
+    "contract_size_default": 1000,
+    "buy_stock_at": "ask",
+    "sell_option_at": "bid",
+    "warn_on_buy_queue": true
+  },
+  "theme": {
+    "up": "#0D9488",
+    "down": "#E11D48",
+    "neutral": "#64748B",
+    "bg_up": "#0B1220",
+    "bg_down": "#1A0B10",
+    "bg_neutral": "#080D19"
+  },
+  "paths": {
+    "sqlite": "data/market.sqlite",
+    "runtime_manifest": "data/runtime_manifest.json",
+    "architecture": "docs/ARCHITECTURE.md",
+    "backup_dir": "data/backups"
+  }
+}
